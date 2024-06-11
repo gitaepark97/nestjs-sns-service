@@ -5,7 +5,7 @@ import {
   Module,
   NestModule,
 } from "@nestjs/common";
-import { winstonLogger } from "./winston.logger";
+import { winstonLogger } from "./winston-logger";
 import { Environment } from "../../config/env.validation";
 import { LoggingMiddleware } from "./logging.middleware";
 
