@@ -1,0 +1,9 @@
+dist
+node_modules
+.dockerignore
+.eslintrc.js
+.gitignore
+.prettierrc
+Dockerfile
+Dockerfile.*
+nest-cli.json
