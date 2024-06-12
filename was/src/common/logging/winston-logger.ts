@@ -34,7 +34,10 @@ const transports =
     ? dailyOptions
     : [
         new winston.transports.Console({
-          level: "debug",
+          level:
+            process.env.NODE_ENV === Environment.Development
+              ? "debug"
+              : "error",
           format: generateFormat(true),
         }),
         ...dailyOptions,

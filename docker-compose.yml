@@ -1,6 +1,19 @@
 version: "3.4"
 
 services:
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_USER=dev_user
+      - MYSQL_PASSWORD=dev_password
+      - MYSQL_DATABASE=dev_database
+    volumes:
+      - mysql_data:/var/lib/mysql
+
   was:
     container_name: was
     build:
@@ -11,3 +24,6 @@ services:
     volumes:
       - ./was:/app
       - /app/node_modules
+
+volumes:
+  mysql_data:
