@@ -1,12 +1,12 @@
-import { registerAs } from '@nestjs/config';
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { Environment } from './env.validation';
+import { registerAs } from "@nestjs/config";
+import { TypeOrmModuleOptions } from "@nestjs/typeorm";
+import { Environment } from "./env.validation";
 
 export const databaseConfig = registerAs(
-  'database',
+  "database",
   () =>
     <TypeOrmModuleOptions>{
-      type: 'mysql',
+      type: "mysql",
       host: process.env.MYSQL_HOST,
       port: parseInt(process.env.MYSQL_PORT!),
       username: process.env.MYSQL_USERNAME,

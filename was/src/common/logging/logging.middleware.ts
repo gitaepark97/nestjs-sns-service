@@ -9,9 +9,8 @@ export class LoggingMiddleware implements NestMiddleware {
     const start = Date.now();
 
     response.on("finish", () => {
-      const { statusCode } = response;
       this.logger.log(
-        `${request.method} ${request.originalUrl} ${request.statusCode} ${request.ip} ${request.get("user-agent")} - ${Date.now() - start}ms`,
+        `${request.method} ${request.originalUrl} ${response.statusCode} ${request.ip} ${request.get("user-agent")} - ${Date.now() - start}ms`,
       );
     });
 
