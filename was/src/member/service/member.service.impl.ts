@@ -37,7 +37,7 @@ export class MemberServiceImpl
     return this.memberRepository.saveMember(member);
   }
 
-  async getMember(id: number): Promise<Member> {
+  getMember(id: number): Promise<Member> {
     // 회원 조회
     return Validation.notFound(
       this.memberRepository.findMemberById(id),
