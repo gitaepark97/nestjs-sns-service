@@ -62,7 +62,7 @@ export class MemberServiceImpl
     return this.memberRepository.saveMember(member);
   }
 
-  private validateEmail(email: string) {
+  private async validateEmail(email: string) {
     return Validation.conflict(
       this.memberRepository.findMemberByEmail(email),
       "이미 사용 중인 이메일입니다.",

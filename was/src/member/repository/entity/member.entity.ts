@@ -8,8 +8,9 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-@Index("idx_members_1", ["email"], { unique: true })
-@Index("idx_members_2", ["nickname"], { unique: true })
+@Index("idx1", ["email"], { unique: true })
+@Index("idx2", ["nickname"], { unique: true })
+@Index("idx3", ["deletedAt"])
 @Entity("members")
 export class MemberEntity {
   @PrimaryGeneratedColumn({ type: "int" })
