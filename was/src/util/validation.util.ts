@@ -17,6 +17,7 @@ export abstract class Validation {
     if (exist instanceof Promise) exist = await exist;
 
     if (!exist) throw new NotFoundException(errorMessage);
+
     return exist;
   }
 }

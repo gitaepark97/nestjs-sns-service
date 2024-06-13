@@ -20,7 +20,7 @@ export class MemberServiceImpl
   constructor(private readonly memberRepository: MemberRepository) {}
 
   async createMember(command: CreateMemberCommand) {
-    // 데이터 확인
+    // 병렬적으로 데이터 확인
     await Promise.all([
       this.validateEmail(command.email),
       this.validateNickname(command.nickname),
@@ -56,13 +56,13 @@ export class MemberServiceImpl
     const member = await this.getMember(command.id);
 
     // 닉네임 변경
-    command.nickname && (await this.updateNickname(member, command.nickname));
+    await this.updateNickname(member, command.nickname);
 
     // 회원 저장
     return this.memberRepository.saveMember(member);
   }
 
-  private async validateEmail(email: string) {
+  private validateEmail(email: string) {
     return Validation.conflict(
       this.memberRepository.findMemberByEmail(email),
       "이미 사용 중인 이메일입니다.",
@@ -76,7 +76,10 @@ export class MemberServiceImpl
     );
   }
 
-  private async updateNickname(member: Member, newNickname: string) {
+  private async updateNickname(member: Member, newNickname?: string) {
+    // 변경할 닉네임이 존재하지 않는 경우
+    if (!newNickname) return;
+
     // 변경할 닉네임이 기존과 동일한 경우
     if (newNickname === member.nickname) return;
 
