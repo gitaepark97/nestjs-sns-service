@@ -563,7 +563,7 @@ describe("MemberController (e2e)", () => {
           expect(statusCode).toBe(HttpStatus.BAD_REQUEST);
           expect(responseBody.timestamp).toEqual(expect.any(String));
           expect(responseBody.path).toBe(url);
-          expect(responseBody.message).toBe("ID는 자연수입니다.");
+          expect(responseBody.message).toBe("회원 ID는 자연수입니다.");
         });
       });
     });
@@ -688,7 +688,7 @@ describe("MemberController (e2e)", () => {
           expect(statusCode).toBe(HttpStatus.BAD_REQUEST);
           expect(responseBody.timestamp).toEqual(expect.any(String));
           expect(responseBody.path).toBe(url);
-          expect(responseBody.message).toBe("ID는 자연수입니다.");
+          expect(responseBody.message).toBe("회원 ID는 자연수입니다.");
         });
       });
 
@@ -901,7 +901,7 @@ describe("MemberController (e2e)", () => {
           expect(statusCode).toBe(HttpStatus.BAD_REQUEST);
           expect(responseBody.timestamp).toEqual(expect.any(String));
           expect(responseBody.path).toBe(url);
-          expect(responseBody.message).toBe("ID는 자연수입니다.");
+          expect(responseBody.message).toBe("회원 ID는 자연수입니다.");
         });
       });
     });

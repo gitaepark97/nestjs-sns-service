@@ -8,8 +8,8 @@ export class GetMemberRequestPath {
     description: "자연수",
     example: 1,
   })
-  @Transform((obj) => parseInt(obj.value))
-  @IsInt({ message: "ID는 자연수입니다." })
-  @IsPositive({ message: "ID는 자연수입니다." })
+  @Transform(({ value }) => parseInt(value))
+  @IsInt({ message: "회원 ID는 자연수입니다." })
+  @IsPositive({ message: "회원 ID는 자연수입니다." })
   readonly memberId: number;
 }

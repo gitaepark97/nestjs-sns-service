@@ -1,15 +1,11 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { MemberRepository } from "./member.repository";
 import { InjectRepository } from "@nestjs/typeorm";
 import { MemberEntity } from "./entity/member.entity";
 import { IsNull, Repository } from "typeorm";
 import { Member } from "../domain/member";
-import { MemberMapper } from "./mapper/member.mapper";
 import { extractIdxName } from "../../util/database.util";
+import { Validation } from "../../util/validation.util";
 
 @Injectable()
 export class MemberRepositoryImpl implements MemberRepository {
@@ -19,16 +15,20 @@ export class MemberRepositoryImpl implements MemberRepository {
   ) {}
 
   async saveMember(member: Member): Promise<void> {
-    const memberEntity = MemberMapper.mapToEntity(member);
     try {
-      await this.memberEntityRepository.save(memberEntity);
+      await this.memberEntityRepository.save({
+        id: member.id,
+        email: member.email,
+        password: member.password,
+        nickname: member.nickname,
+      });
     } catch (err) {
       if (err.code === "ER_DUP_ENTRY") {
         switch (extractIdxName(err)) {
-          case "idx1":
-            throw new ConflictException("이미 사용 중인 이메일입니다.");
           case "idx2":
-            throw new ConflictException("이미 사융 중인 닉네임입니다.");
+            return Validation.conflict("exist", "이미 사용 중인 이메일입니다.");
+          case "idx3":
+            return Validation.conflict("exist", "이미 사용 중인 닉네임입니다.");
         }
       }
 
@@ -40,21 +40,21 @@ export class MemberRepositoryImpl implements MemberRepository {
     const memberEntity = await this.memberEntityRepository.findOne({
       where: { email },
     });
-    return memberEntity && MemberMapper.mapToDomain(memberEntity);
+    return memberEntity && Member.fromEntity(memberEntity);
   }
 
   async findMemberByNickname(nickname: string): Promise<Member | null> {
     const memberEntity = await this.memberEntityRepository.findOne({
       where: { nickname },
     });
-    return memberEntity && MemberMapper.mapToDomain(memberEntity);
+    return memberEntity && Member.fromEntity(memberEntity);
   }
 
   async findMemberById(id: number): Promise<Member | null> {
     const memberEntity = await this.memberEntityRepository.findOne({
       where: { id },
     });
-    return memberEntity && MemberMapper.mapToDomain(memberEntity);
+    return memberEntity && Member.fromEntity(memberEntity);
   }
 
   async deleteMember(id: number): Promise<void> {
@@ -62,7 +62,6 @@ export class MemberRepositoryImpl implements MemberRepository {
       id,
       deletedAt: IsNull(),
     });
-    if (!result.affected)
-      throw new NotFoundException("존재하지 않는 회원입니다.");
+    Validation.notFound(result.affected, "존재하지 않는 회원입니다.");
   }
 }

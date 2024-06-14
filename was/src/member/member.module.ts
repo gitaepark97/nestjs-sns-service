@@ -23,5 +23,6 @@ import { DeleteMemberService } from "./service/delete-member.service";
     { provide: UpdateMemberService, useClass: MemberServiceImpl },
     { provide: DeleteMemberService, useClass: MemberServiceImpl },
   ],
+  exports: [GetMemberService],
 })
 export class MemberModule {}

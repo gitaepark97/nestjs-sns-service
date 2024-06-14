@@ -126,7 +126,7 @@ export class MemberController {
           memberId: {
             value: generateErrorExample(
               "/v1/members/:memberId",
-              "ID는 자연수입니다.",
+              "회원 ID는 자연수입니다.",
             ),
           },
         },
@@ -175,7 +175,7 @@ export class MemberController {
           memberId: {
             value: generateErrorExample(
               "/v1/members/:memberId",
-              "ID는 자연수입니다.",
+              "회원 ID는 자연수입니다.",
             ),
           },
           nickname: {
@@ -248,7 +248,7 @@ export class MemberController {
           memberId: {
             value: generateErrorExample(
               "/v1/members/:memberId",
-              "ID는 자연수입니다.",
+              "회원 ID는 자연수입니다.",
             ),
           },
         },

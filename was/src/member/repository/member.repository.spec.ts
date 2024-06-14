@@ -49,12 +49,13 @@ describe("MemberRepository", () => {
 
     it("ID가 있는 회원 저장 성공", async () => {
       // given
-      const member = Member.fromMemberLike({
-        id: 1,
-        email: "member1@email.com",
-        password: "Qwer1234!",
-        nickname: "회원1",
-      });
+      const memberEntity = new MemberEntity();
+      memberEntity.id = 1;
+      memberEntity.email = "member1@email.com";
+      memberEntity.password = "Qwer1234!";
+      memberEntity.nickname = "회원1";
+
+      const member = Member.fromEntity(memberEntity);
 
       // when
       await repository.saveMember(member);

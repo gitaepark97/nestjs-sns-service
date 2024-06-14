@@ -1,23 +1,41 @@
-import { ConflictException, NotFoundException } from "@nestjs/common";
+import {
+  ConflictException,
+  ForbiddenException,
+  NotFoundException,
+} from "@nestjs/common";
 
 export abstract class Validation {
-  static async conflict<T>(
-    exist: T | null | Promise<T | null>,
+  static conflict<T>(exist: T | null, errorMessage: string) {
+    if (exist) throw new ConflictException(errorMessage);
+  }
+
+  static async asyncConflict<T>(
+    promise: Promise<T | null>,
     errorMessage: string,
   ) {
-    if (exist instanceof Promise) exist = await exist;
+    const exist = await promise;
 
     if (exist) throw new ConflictException(errorMessage);
   }
 
-  static async notFound<T>(
-    exist: T | null | Promise<T | null>,
+  static notFound<T>(exist: T | null, errorMessage: string) {
+    if (!exist) throw new NotFoundException(errorMessage);
+
+    return exist;
+  }
+
+  static async asyncNotFound<T>(
+    promise: Promise<T | null>,
     errorMessage: string,
   ) {
-    if (exist instanceof Promise) exist = await exist;
+    const exist = await promise;
 
     if (!exist) throw new NotFoundException(errorMessage);
 
     return exist;
+  }
+
+  static forbidden<T>(isAllowed: boolean, errorMessage: string) {
+    if (!isAllowed) throw new ForbiddenException(errorMessage);
   }
 }

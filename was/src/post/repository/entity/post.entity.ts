@@ -9,21 +9,16 @@ import {
 } from "typeorm";
 
 @Index("idx1", ["deletedAt"])
-@Index("idx2", ["email"], { unique: true })
-@Index("idx3", ["nickname"], { unique: true })
-@Entity("members")
-export class MemberEntity {
+@Entity("posts")
+export class PostEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 100 })
-  email: string;
+  @Column({ name: "creator_id" })
+  creatorId: number;
 
-  @Column()
-  password: string;
-
-  @Column({ length: 30 })
-  nickname: string;
+  @Column({ type: "text" })
+  content: string;
 
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
