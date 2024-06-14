@@ -14,7 +14,7 @@ export const databaseConfig = registerAs(
       database: process.env.MYSQL_DATABASE,
       entities: [`${__dirname}/../**/*.entity{.ts,.js}`],
       synchronize: process.env.NODE_ENV !== Environment.Production,
-      log: process.env.NODE_ENV === Environment.Development,
+      logging: process.env.NODE_ENV === Environment.Development,
       dropSchema: process.env.NODE_ENV === Environment.Test,
     },
 );

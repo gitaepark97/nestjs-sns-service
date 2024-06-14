@@ -25,7 +25,7 @@ export class ResponseValidationInterceptor<T extends object>
 
           return transformedData;
         } catch (err) {
-          throw err;
+          throw Error(err);
         }
       }),
     );
