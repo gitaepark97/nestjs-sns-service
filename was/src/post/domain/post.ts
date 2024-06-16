@@ -62,10 +62,10 @@ export class Post {
   }
 
   updateContent(newContent?: string) {
-    // 변경할 게시글 내용 존재하지 않는 경우
+    // 변경할 내용 존재하지 않는 경우
     if (!newContent) return;
 
-    // 변경할 게시글 내용이 기존과 동일한 경우
+    // 변경할 내용이 기존과 동일한 경우
     if (newContent === this._content) return;
 
     // 게시글 내용 변경

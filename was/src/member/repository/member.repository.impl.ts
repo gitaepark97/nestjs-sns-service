@@ -1,11 +1,14 @@
-import { Injectable } from "@nestjs/common";
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { MemberRepository } from "./member.repository";
 import { InjectRepository } from "@nestjs/typeorm";
 import { MemberEntity } from "./entity/member.entity";
 import { IsNull, Repository } from "typeorm";
 import { Member } from "../domain/member";
 import { extractIdxName } from "../../util/database.util";
-import { Validation } from "../../util/validation.util";
 
 @Injectable()
 export class MemberRepositoryImpl implements MemberRepository {
@@ -26,9 +29,9 @@ export class MemberRepositoryImpl implements MemberRepository {
       if (err.code === "ER_DUP_ENTRY") {
         switch (extractIdxName(err)) {
           case "idx2":
-            return Validation.conflict("exist", "이미 사용 중인 이메일입니다.");
+            throw new ConflictException("이미 사용 중인 이메일입니다.");
           case "idx3":
-            return Validation.conflict("exist", "이미 사용 중인 닉네임입니다.");
+            throw new ConflictException("이미 사용 중인 닉네임입니다.");
         }
       }
 
@@ -62,6 +65,7 @@ export class MemberRepositoryImpl implements MemberRepository {
       id,
       deletedAt: IsNull(),
     });
-    Validation.notFound(result.affected, "존재하지 않는 회원입니다.");
+    if (!result.affected)
+      throw new NotFoundException("존재하지 않는 회원입니다.");
   }
 }

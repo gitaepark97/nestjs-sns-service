@@ -32,7 +32,7 @@ describe("CreateMemberService", () => {
   });
 
   describe("회원 생성", () => {
-    const member1 = Member.create("member1@email.com", "Qwer1234!", "회원1");
+    const member = Member.create("member1@email.com", "Qwer1234!", "회원1");
 
     it("회원 생성 성공", async () => {
       // mocking
@@ -66,7 +66,7 @@ describe("CreateMemberService", () => {
       // mocking
       const findMemberByEmailMock = jest
         .spyOn(memberRepository, "findMemberByEmail")
-        .mockResolvedValueOnce(member1);
+        .mockResolvedValueOnce(member);
       const findMemberByNicknameMock = jest
         .spyOn(memberRepository, "findMemberByNickname")
         .mockResolvedValueOnce(null);
@@ -76,7 +76,7 @@ describe("CreateMemberService", () => {
 
       // given
       const command = new CreateMemberCommand(
-        member1.email,
+        member.email,
         "Qwer1234!",
         "회원2",
       );
@@ -99,7 +99,7 @@ describe("CreateMemberService", () => {
         .mockResolvedValueOnce(null);
       const findMemberByNicknameMock = jest
         .spyOn(memberRepository, "findMemberByNickname")
-        .mockResolvedValueOnce(member1);
+        .mockResolvedValueOnce(member);
       const saveMemberMock = jest
         .spyOn(memberRepository, "saveMember")
         .mockResolvedValueOnce();
@@ -108,7 +108,7 @@ describe("CreateMemberService", () => {
       const command = new CreateMemberCommand(
         "member2@email.com",
         "Qwer1234!",
-        member1.nickname,
+        member.nickname,
       );
 
       // when

@@ -22,10 +22,6 @@ export class Member {
     return this._nickname;
   }
 
-  set nickname(nickname: string) {
-    this._nickname = nickname;
-  }
-
   static create(email: string, password: string, nickname: string) {
     const member = new Member();
 
@@ -47,20 +43,14 @@ export class Member {
     return member;
   }
 
-  async updateNickname(
-    validator: (nickname: string) => Promise<void>,
-    newNickname?: string,
-  ) {
+  updateNickname(newNickname?: string) {
     // 변경할 닉네임이 존재하지 않는 경우
     if (!newNickname) return;
 
     // 변경할 닉네임이 기존과 동일한 경우
     if (newNickname === this._nickname) return;
 
-    // 닉네임 중복 확인
-    await validator(newNickname);
-
-    // 회원의 닉네임 변경
+    // 회원 닉네임 변경
     this._nickname = newNickname;
   }
 }

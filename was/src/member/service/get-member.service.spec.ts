@@ -29,24 +29,24 @@ describe("GetMemberService", () => {
   });
 
   describe("회원 조회", () => {
-    const member1 = Member.create("member1@email.com", "Qwer1234!", "회원1");
+    const member = Member.create("member1@email.com", "Qwer1234!", "회원1");
 
     it("회원 조회 성공", async () => {
       // mocking
       const findMemberByIdMock = jest
         .spyOn(memberRepository, "findMemberById")
-        .mockResolvedValueOnce(member1);
+        .mockResolvedValueOnce(member);
 
       // given
 
       // when
-      const result = await service.getMember(member1.id);
+      const result = await service.getMember(member.id);
 
       // then
-      expect(result.id).toBe(member1.id);
-      expect(result.email).toBe(member1.email);
-      expect(result.password).toBe(member1.password);
-      expect(result.nickname).toBe(member1.nickname);
+      expect(result.id).toBe(member.id);
+      expect(result.email).toBe(member.email);
+      expect(result.password).toBe(member.password);
+      expect(result.nickname).toBe(member.nickname);
 
       expect(findMemberByIdMock).toHaveBeenCalledTimes(1);
     });

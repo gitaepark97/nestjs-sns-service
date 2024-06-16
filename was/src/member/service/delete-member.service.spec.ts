@@ -30,13 +30,13 @@ describe("DeleteMemberService", () => {
   });
 
   describe("회원 삭제", () => {
-    const member1 = Member.create("member1@email.com", "Qwer1234!", "회원1");
+    const member = Member.create("member1@email.com", "Qwer1234!", "회원1");
 
     it("회원 삭제 성공", async () => {
       // mocking
       const findMemberByIdMock = jest
         .spyOn(memberRepository, "findMemberById")
-        .mockResolvedValueOnce(member1);
+        .mockResolvedValueOnce(member);
       const deleteMemberMock = jest
         .spyOn(memberRepository, "deleteMember")
         .mockResolvedValueOnce();
@@ -44,7 +44,7 @@ describe("DeleteMemberService", () => {
       // given
 
       // when
-      await service.deleteMember(member1.id);
+      await service.deleteMember(member.id);
 
       // then
       expect(findMemberByIdMock).toHaveBeenCalledTimes(1);

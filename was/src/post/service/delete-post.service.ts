@@ -1,3 +1,3 @@
 export abstract class DeletePostService {
-  abstract deletePost(postId: number, memberId: number): Promise<void>;
+  abstract deletePost(memberId: number, postId: number): Promise<void>;
 }

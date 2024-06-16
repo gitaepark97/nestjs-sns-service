@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsInt, IsNotEmpty, IsPositive } from "class-validator";
+import { IsInt, IsNotEmpty, IsPositive, IsString } from "class-validator";
 import { Transform } from "class-transformer";
 
 export class CreatePostRequestQuery {
@@ -16,10 +16,11 @@ export class CreatePostRequestQuery {
 
 export class CreatePostRequestBody {
   @ApiProperty({
-    title: "게시글 내용",
+    title: "내용",
     description: "문자열",
     example: "게시글 1",
   })
-  @IsNotEmpty({ message: "올바르지 않은 게시글 내용입니다." })
+  @IsNotEmpty({ message: "올바르지 않은 내용입니다." })
+  @IsString({ message: "올바르지 않은 내용입니다." })
   readonly content: string;
 }

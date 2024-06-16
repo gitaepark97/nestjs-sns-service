@@ -366,15 +366,11 @@ describe("MemberController (e2e)", () => {
 
     describe("conflict", () => {
       beforeEach(async () => {
-        const url = "/members";
-        const requestBody = {
+        await request(app.getHttpServer()).post("/members").send({
           email: "member1@email.com",
           password: "Qwer1234!",
           nickname: "회원1",
-        };
-
-        // when
-        await request(app.getHttpServer()).post(url).send(requestBody);
+        });
       });
 
       it("이미 사용 중인 이메일", async () => {
@@ -518,14 +514,11 @@ describe("MemberController (e2e)", () => {
   describe("/members/:memberId (GET)", () => {
     describe("ok", () => {
       beforeEach(async () => {
-        const url = "/members";
-        const requestBody = {
+        await request(app.getHttpServer()).post("/members").send({
           email: "member1@email.com",
           password: "Qwer1234!",
           nickname: "회원1",
-        };
-
-        await request(app.getHttpServer()).post(url).send(requestBody);
+        });
       });
 
       it("회원 조회 성공", async () => {

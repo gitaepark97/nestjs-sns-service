@@ -19,15 +19,14 @@ describe("회원 도메인", () => {
     expect(member.nickname).toBe(nickname);
   });
 
-  it("회원의 정보를 가진 객체로부터 회원 도메인 생성", () => {
+  it("회원 엔티티로부터 회원 도메인 생성", () => {
     // given
-    const memberEntity = new MemberEntity();
-    memberEntity.id = 1;
-    memberEntity.email = email;
-    memberEntity.password = password;
-    memberEntity.nickname = nickname;
-    memberEntity.createdAt = new Date();
-    memberEntity.updatedAt = new Date();
+    const memberEntity = <MemberEntity>{
+      id: 1,
+      email,
+      password,
+      nickname,
+    };
 
     // when
     const member = Member.fromEntity(memberEntity);
@@ -44,28 +43,22 @@ describe("회원 도메인", () => {
     const member = Member.create(email, password, nickname);
 
     it("새로운 닉네임으로 수정", async () => {
-      // mocking
-      const validator = (nickname: string) => Promise.resolve();
-
       // given
       const newNickname = "수정 회원1";
 
       // when
-      await member.updateNickname(validator, newNickname);
+      member.updateNickname(newNickname);
 
       // then
       expect(member.nickname).toBe(newNickname);
     });
 
-    it("기존 닉네임으로 수정", async () => {
-      // mocking
-      const validator = (nickname: string) => Promise.resolve();
-
+    it("기존 닉네임으로 수정", () => {
       // given
       const newNickname = member.nickname;
 
       // when
-      await member.updateNickname(validator, newNickname);
+      member.updateNickname(newNickname);
 
       // then
       expect(member.nickname).toBe(newNickname);

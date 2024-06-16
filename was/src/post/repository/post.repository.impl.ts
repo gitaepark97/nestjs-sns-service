@@ -1,10 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PostRepository } from "./post.repository";
 import { InjectRepository } from "@nestjs/typeorm";
 import { PostEntity } from "./entity/post.entity";
 import { FindManyOptions, IsNull, LessThan, Repository } from "typeorm";
 import { Post } from "../domain/post";
-import { Validation } from "../../util/validation.util";
 
 @Injectable()
 export class PostRepositoryImpl implements PostRepository {
@@ -33,7 +32,8 @@ export class PostRepositoryImpl implements PostRepository {
       id,
       deletedAt: IsNull(),
     });
-    Validation.notFound(result.affected, "존재하지 않는 게시글입니다.");
+    if (!result.affected)
+      throw new NotFoundException("존재하지 않는 게시글입니다.");
   }
 
   findPostsByMemberId(memberId: number, pageSize: number): Promise<Post[]> {

@@ -73,7 +73,7 @@ export class PostController {
           content: {
             value: generateErrorExample(
               "/v1/posts",
-              "올바르지 않은 게시글 내용입니다.",
+              "올바르지 않은 내용입니다.",
             ),
           },
         },
@@ -186,7 +186,7 @@ export class PostController {
           content: {
             value: generateErrorExample(
               "/v1/posts/:postId",
-              "올바르지 않은 게시글 내용입니다.",
+              "올바르지 않은 내용입니다.",
             ),
           },
         },
@@ -242,8 +242,8 @@ export class PostController {
     @Body() body: UpdatePostRequestBody,
   ) {
     const command = new UpdatePostCommand(
-      path.postId,
       query.memberId,
+      path.postId,
       body.content,
     );
     await this.updatePostService.updatePost(command);
@@ -319,7 +319,7 @@ export class PostController {
     @Param() path: DeletePostRequestPath,
     @Query() query: DeletePostRequestQuery,
   ) {
-    await this.deletePostService.deletePost(path.postId, query.memberId);
+    await this.deletePostService.deletePost(query.memberId, path.postId);
   }
 
   @ApiOperation({ summary: "회원의 게시글 목록 API" })

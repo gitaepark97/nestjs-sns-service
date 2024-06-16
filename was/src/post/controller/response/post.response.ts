@@ -24,7 +24,7 @@ export class PostResponse {
   readonly creatorId: number;
 
   @ApiProperty({
-    title: "게시글 내용",
+    title: "내용",
     description: "문자열",
     example: "게시글 1",
   })

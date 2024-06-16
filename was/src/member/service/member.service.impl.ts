@@ -1,10 +1,13 @@
-import { Injectable } from "@nestjs/common";
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { CreateMemberService } from "./create-member.service";
 import { Member } from "../domain/member";
 import { CreateMemberCommand } from "./command/create-member.command";
 import { MemberRepository } from "../repository/member.repository";
 import { GetMemberService } from "./get-member.service";
-import { Validation } from "../../util/validation.util";
 import { UpdateMemberService } from "./update-member.service";
 import { UpdateMemberCommand } from "./command/update-member.command";
 import { DeleteMemberService } from "./delete-member.service";
@@ -18,10 +21,6 @@ export class MemberServiceImpl
     DeleteMemberService
 {
   constructor(private readonly memberRepository: MemberRepository) {}
-
-  async validateMember(memberId: number): Promise<void> {
-    await this.getMember(memberId);
-  }
 
   async createMember(command: CreateMemberCommand) {
     // 병렬적으로 데이터 확인
@@ -41,12 +40,12 @@ export class MemberServiceImpl
     return this.memberRepository.saveMember(member);
   }
 
-  getMember(id: number): Promise<Member> {
+  async getMember(id: number): Promise<Member> {
     // 회원 조회
-    return Validation.asyncNotFound(
-      this.memberRepository.findMemberById(id),
-      "존재하지 않는 회원입니다.",
-    );
+    const member = await this.memberRepository.findMemberById(id);
+    if (!member) throw new NotFoundException("존재하지 않는 회원입니다.");
+
+    return member;
   }
 
   async deleteMember(memberId: number): Promise<void> {
@@ -60,26 +59,33 @@ export class MemberServiceImpl
     const member = await this.getMember(command.id);
 
     // 닉네임 변경
-    await member.updateNickname(
-      (nickname) => this.validateNickname(nickname),
-      command.nickname,
-    );
+    await this.updateNickname(member, command.nickname);
 
     // 회원 저장
     return this.memberRepository.saveMember(member);
   }
 
-  private validateEmail(email: string) {
-    return Validation.asyncConflict(
-      this.memberRepository.findMemberByEmail(email),
-      "이미 사용 중인 이메일입니다.",
-    );
+  private async validateEmail(email: string) {
+    const member = await this.memberRepository.findMemberByEmail(email);
+    if (member) throw new ConflictException("이미 사용 중인 이메일입니다.");
   }
 
-  private validateNickname(nickname: string) {
-    return Validation.asyncConflict(
-      this.memberRepository.findMemberByNickname(nickname),
-      "이미 사용 중인 닉네임입니다.",
-    );
+  private async validateNickname(nickname: string) {
+    const member = await this.memberRepository.findMemberByNickname(nickname);
+    if (member) throw new ConflictException("이미 사용 중인 닉네임입니다.");
+  }
+
+  private async updateNickname(member: Member, newNickname?: string) {
+    // 변경할 닉네임이 존재하지 않는 경우
+    if (!newNickname) return;
+
+    // 변경할 닉네임이 기존과 동일한 경우
+    if (newNickname === member.nickname) return;
+
+    // 닉네임 확인
+    await this.validateNickname(newNickname);
+
+    // 회원의 닉네임 변경
+    member.updateNickname(newNickname);
   }
 }
