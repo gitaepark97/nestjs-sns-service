@@ -48,6 +48,7 @@ import {
   DeletePostRequestPath,
   DeletePostRequestQuery,
 } from "./request/delete-post.request";
+import { pipe } from "@fxts/core";
 
 @ApiTags("게시글")
 @Controller("posts")
@@ -107,12 +108,14 @@ export class PostController {
     },
   })
   @Post()
-  async createPost(
+  createPost(
     @Query() query: CreatePostRequestQuery,
     @Body() body: CreatePostRequestBody,
   ) {
-    const command = new CreatePostCommand(query.memberId, body.content);
-    await this.createPostService.createPost(command);
+    return pipe(
+      new CreatePostCommand(query.memberId, body.content),
+      (command) => this.createPostService.createPost(command),
+    );
   }
 
   @ApiOperation({ summary: "게시글 조회 API" })
@@ -236,17 +239,15 @@ export class PostController {
     },
   })
   @Patch(":postId")
-  async updatePost(
+  updatePost(
     @Param() path: UpdatePostRequestPath,
     @Query() query: UpdatePostRequestQuery,
     @Body() body: UpdatePostRequestBody,
   ) {
-    const command = new UpdatePostCommand(
-      query.memberId,
-      path.postId,
-      body.content,
+    return pipe(
+      new UpdatePostCommand(query.memberId, path.postId, body.content),
+      (command) => this.updatePostService.updatePost(command),
     );
-    await this.updatePostService.updatePost(command);
   }
 
   @ApiOperation({ summary: "게시글 삭제 API" })
@@ -315,11 +316,11 @@ export class PostController {
     },
   })
   @Delete(":postId")
-  async deletePost(
+  deletePost(
     @Param() path: DeletePostRequestPath,
     @Query() query: DeletePostRequestQuery,
   ) {
-    await this.deletePostService.deletePost(query.memberId, path.postId);
+    return this.deletePostService.deletePost(query.memberId, path.postId);
   }
 
   @ApiOperation({ summary: "회원의 게시글 목록 API" })

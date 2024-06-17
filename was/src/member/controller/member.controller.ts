@@ -34,6 +34,7 @@ import {
 import { generateErrorExample } from "../../common/swagger";
 import { DeleteMemberRequestPath } from "./request/delete-member.request";
 import { DeleteMemberService } from "../service/delete-member.service";
+import { pipe } from "@fxts/core";
 
 @ApiTags("회원")
 @Controller("members")
@@ -107,13 +108,11 @@ export class MemberController {
     },
   })
   @Post()
-  async createMember(@Body() body: CreateMemberRequestBody) {
-    const command = new CreateMemberCommand(
-      body.email,
-      body.password,
-      body.nickname,
+  createMember(@Body() body: CreateMemberRequestBody) {
+    return pipe(
+      new CreateMemberCommand(body.email, body.password, body.nickname),
+      (command) => this.createMemberService.createMember(command),
     );
-    await this.createMemberService.createMember(command);
   }
 
   @ApiOperation({ summary: "회원 조회 API" })
@@ -230,12 +229,14 @@ export class MemberController {
     },
   })
   @Patch(":memberId")
-  async updateMember(
+  updateMember(
     @Param() path: UpdateMemberRequestPath,
     @Body() body: UpdateMemberRequestBody,
   ) {
-    const command = new UpdateMemberCommand(path.memberId, body.nickname);
-    await this.updateMemberService.updateMember(command);
+    return pipe(
+      new UpdateMemberCommand(path.memberId, body.nickname),
+      (command) => this.updateMemberService.updateMember(command),
+    );
   }
 
   @ApiOperation({ summary: "회원 삭제 API" })
@@ -282,7 +283,7 @@ export class MemberController {
     },
   })
   @Delete(":memberId")
-  async deleteMember(@Param() path: DeleteMemberRequestPath) {
-    await this.deleteMemberService.deleteMember(path.memberId);
+  deleteMember(@Param() path: DeleteMemberRequestPath) {
+    return this.deleteMemberService.deleteMember(path.memberId);
   }
 }

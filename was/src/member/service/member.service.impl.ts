@@ -11,6 +11,7 @@ import { GetMemberService } from "./get-member.service";
 import { UpdateMemberService } from "./update-member.service";
 import { UpdateMemberCommand } from "./command/update-member.command";
 import { DeleteMemberService } from "./delete-member.service";
+import { isNil, pipe, tap, throwIf } from "@fxts/core";
 
 @Injectable()
 export class MemberServiceImpl
@@ -22,57 +23,61 @@ export class MemberServiceImpl
 {
   constructor(private readonly memberRepository: MemberRepository) {}
 
-  async createMember(command: CreateMemberCommand) {
-    // 병렬적으로 데이터 확인
-    await Promise.all([
-      this.validateEmail(command.email),
-      this.validateNickname(command.nickname),
-    ]);
-
-    // 회원 생성
-    const member = Member.create(
-      command.email,
-      command.password,
-      command.nickname,
+  createMember(command: CreateMemberCommand): Promise<void> {
+    return pipe(
+      command,
+      tap(({ email, nickname }) =>
+        Promise.all([
+          this.validateEmail(email),
+          this.validateNickname(nickname),
+        ]),
+      ), // 데이터 확인
+      ({ email, password, nickname }) =>
+        Member.create(email, password, nickname), // 회원 생성
+      (member) => this.memberRepository.saveMember(member), // 회원 저장
     );
-
-    // 회원 저장
-    return this.memberRepository.saveMember(member);
   }
 
-  async getMember(id: number): Promise<Member> {
-    // 회원 조회
-    const member = await this.memberRepository.findMemberById(id);
-    if (!member) throw new NotFoundException("존재하지 않는 회원입니다.");
-
-    return member;
+  getMember(id: number): Promise<Member> {
+    return pipe(
+      this.memberRepository.findMemberById(id), // 회원 조회
+      throwIf(isNil, () => new NotFoundException("존재하지 않는 회원입니다.")),
+    );
   }
 
-  async deleteMember(memberId: number): Promise<void> {
-    const member = await this.getMember(memberId);
-
-    return this.memberRepository.deleteMember(member.id);
+  deleteMember(memberId: number): Promise<void> {
+    return pipe(
+      this.getMember(memberId), // 회원 조회
+      ({ id }) => this.memberRepository.deleteMember(id), // 회원 삭제
+    );
   }
 
-  async updateMember(command: UpdateMemberCommand): Promise<void> {
-    // 회원 조회
-    const member = await this.getMember(command.id);
-
-    // 닉네임 변경
-    await this.updateNickname(member, command.nickname);
-
-    // 회원 저장
-    return this.memberRepository.saveMember(member);
+  updateMember(command: UpdateMemberCommand): Promise<void> {
+    return pipe(
+      this.getMember(command.id), // 회원 조회
+      tap((member) => this.updateNickname(member, command.nickname)), // 닉네임 변경
+      (member) => this.memberRepository.saveMember(member), // 회원 저장
+    );
   }
 
   private async validateEmail(email: string) {
-    const member = await this.memberRepository.findMemberByEmail(email);
-    if (member) throw new ConflictException("이미 사용 중인 이메일입니다.");
+    await pipe(
+      this.memberRepository.findMemberByEmail(email),
+      throwIf(
+        (member) => !isNil(member),
+        () => new ConflictException("이미 사용 중인 이메일입니다."),
+      ),
+    );
   }
 
   private async validateNickname(nickname: string) {
-    const member = await this.memberRepository.findMemberByNickname(nickname);
-    if (member) throw new ConflictException("이미 사용 중인 닉네임입니다.");
+    await pipe(
+      this.memberRepository.findMemberByNickname(nickname),
+      throwIf(
+        (member) => !isNil(member),
+        () => new ConflictException("이미 사용 중인 닉네임입니다."),
+      ),
+    );
   }
 
   private async updateNickname(member: Member, newNickname?: string) {

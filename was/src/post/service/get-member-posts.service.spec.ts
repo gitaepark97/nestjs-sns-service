@@ -7,6 +7,7 @@ import { Post } from "../domain/post";
 import { PostEntity } from "../repository/entity/post.entity";
 import { GetMemberPostsService } from "./get-member-posts.service";
 import { GetMemberService } from "../../member/service/get-member.service";
+import { map, pipe, range, reverse, take, toArray } from "@fxts/core";
 
 describe("GetMemberPostsService", () => {
   let service: GetMemberPostsService;
@@ -49,15 +50,21 @@ describe("GetMemberPostsService", () => {
       password: "Qwer1234!",
       nickname: "회원1",
     });
-    const posts = Array.from({ length: 20 }, (_, idx) =>
-      Post.fromEntity(<PostEntity>{
-        id: idx + 1,
-        creatorId: member.id,
-        content: `게시글 ${idx + 1}`,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }),
-    ).reverse();
+    const posts = pipe(
+      range(1, Infinity),
+      take(20),
+      map((idx) =>
+        Post.fromEntity(<PostEntity>{
+          id: idx,
+          creatorId: member.id,
+          content: `게시글 ${idx}`,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }),
+      ),
+      reverse,
+      toArray,
+    );
 
     it("회원 게시글 목록 조회 성공", async () => {
       // mocking
@@ -94,7 +101,7 @@ describe("GetMemberPostsService", () => {
       expect(countPostsByMemberIdMock).toHaveBeenCalledTimes(1);
     });
 
-    it("마지막 게시글 ID와 회원 게시글 목록 조회 성공", async () => {
+    it("마지막 게시글 ID로 회원 게시글 목록 조회 성공", async () => {
       // mocking
       const getMemberMock = jest
         .spyOn(getMemberService, "getMember")

@@ -6,6 +6,8 @@ export class Member {
   private _password: string;
   private _nickname: string;
 
+  private constructor() {}
+
   get id() {
     return this._id;
   }

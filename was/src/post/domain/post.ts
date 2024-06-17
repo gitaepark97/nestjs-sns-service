@@ -12,6 +12,8 @@ export class Post {
   private _createdAt: Date;
   private _updatedAt: Date;
 
+  private constructor() {}
+
   get id() {
     return this._id;
   }

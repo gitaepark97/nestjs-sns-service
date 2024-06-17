@@ -4,6 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { PostEntity } from "./entity/post.entity";
 import { FindManyOptions, IsNull, LessThan, Repository } from "typeorm";
 import { Post } from "../domain/post";
+import { map, pipe, throwIf, toArray } from "@fxts/core";
 
 @Injectable()
 export class PostRepositoryImpl implements PostRepository {
@@ -20,20 +21,24 @@ export class PostRepositoryImpl implements PostRepository {
     });
   }
 
-  async findPostById(id: number): Promise<Post | null> {
-    const postEntity = await this.postEntityRepository.findOne({
-      where: { id },
-    });
-    return postEntity && Post.fromEntity(postEntity);
+  findPostById(id: number): Promise<Post | null> {
+    return pipe(
+      this.postEntityRepository.findOne({ where: { id } }),
+      (entity) => entity && Post.fromEntity(entity),
+    );
   }
 
   async deletePost(id: number): Promise<void> {
-    const result = await this.postEntityRepository.softDelete({
-      id,
-      deletedAt: IsNull(),
-    });
-    if (!result.affected)
-      throw new NotFoundException("존재하지 않는 게시글입니다.");
+    await pipe(
+      this.postEntityRepository.softDelete({
+        id,
+        deletedAt: IsNull(),
+      }),
+      throwIf(
+        (result) => !result.affected,
+        () => new NotFoundException("존재하지 않는 게시글입니다."),
+      ),
+    );
   }
 
   findPostsByMemberId(memberId: number, pageSize: number): Promise<Post[]> {
@@ -58,11 +63,14 @@ export class PostRepositoryImpl implements PostRepository {
     return this.postEntityRepository.count({ where: { creatorId: memberId } });
   }
 
-  private async findPostsWithOption(options: FindManyOptions<PostEntity>) {
-    const postEntities = await this.postEntityRepository.find({
-      order: { id: -1 },
-      ...options,
-    });
-    return postEntities.map((entity) => Post.fromEntity(entity));
+  private findPostsWithOption(options: FindManyOptions<PostEntity>) {
+    return pipe(
+      this.postEntityRepository.find({
+        order: { id: -1 },
+        ...options,
+      }),
+      map(Post.fromEntity),
+      toArray,
+    );
   }
 }
