@@ -4,7 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { PostEntity } from "./entity/post.entity";
 import { FindManyOptions, IsNull, LessThan, Repository } from "typeorm";
 import { Post } from "../domain/post";
-import { map, pipe, throwIf, toArray } from "@fxts/core";
+import { map, noop, pipe, throwIf, toArray } from "@fxts/core";
 
 @Injectable()
 export class PostRepositoryImpl implements PostRepository {
@@ -13,23 +13,24 @@ export class PostRepositoryImpl implements PostRepository {
     private readonly postEntityRepository: Repository<PostEntity>,
   ) {}
 
-  async savePost(post: Post): Promise<void> {
-    await this.postEntityRepository.save({
-      id: post.id,
-      creatorId: post.creatorId,
-      content: post.content,
-    });
-  }
+  savePost = (post: Post): Promise<void> =>
+    pipe(
+      this.postEntityRepository.save({
+        id: post.id,
+        creatorId: post.creatorId,
+        content: post.content,
+      }),
+      noop,
+    );
 
-  findPostById(id: number): Promise<Post | null> {
-    return pipe(
+  findPostById = (id: number): Promise<Post | null> =>
+    pipe(
       this.postEntityRepository.findOne({ where: { id } }),
       (entity) => entity && Post.fromEntity(entity),
     );
-  }
 
-  async deletePost(id: number): Promise<void> {
-    await pipe(
+  deletePost = (id: number): Promise<void> =>
+    pipe(
       this.postEntityRepository.softDelete({
         id,
         deletedAt: IsNull(),
@@ -38,33 +39,30 @@ export class PostRepositoryImpl implements PostRepository {
         (result) => !result.affected,
         () => new NotFoundException("존재하지 않는 게시글입니다."),
       ),
+      () => {},
     );
-  }
 
-  findPostsByMemberId(memberId: number, pageSize: number): Promise<Post[]> {
-    return this.findPostsWithOption({
+  findPostsByMemberId = (memberId: number, pageSize: number): Promise<Post[]> =>
+    this.findPostsWithOption({
       where: { creatorId: memberId },
       take: pageSize,
     });
-  }
 
-  findPostsWithCursorByMemberId(
+  findPostsWithCursorByMemberId = (
     memberId: number,
     pageSize: number,
     cursor: number,
-  ): Promise<Post[]> {
-    return this.findPostsWithOption({
+  ): Promise<Post[]> =>
+    this.findPostsWithOption({
       where: { creatorId: memberId, id: LessThan(cursor) },
       take: pageSize,
     });
-  }
 
-  countPostsByMemberId(memberId: number): Promise<number> {
-    return this.postEntityRepository.count({ where: { creatorId: memberId } });
-  }
+  countPostsByMemberId = (memberId: number): Promise<number> =>
+    this.postEntityRepository.count({ where: { creatorId: memberId } });
 
-  private findPostsWithOption(options: FindManyOptions<PostEntity>) {
-    return pipe(
+  private findPostsWithOption = (options: FindManyOptions<PostEntity>) =>
+    pipe(
       this.postEntityRepository.find({
         order: { id: -1 },
         ...options,
@@ -72,5 +70,4 @@ export class PostRepositoryImpl implements PostRepository {
       map(Post.fromEntity),
       toArray,
     );
-  }
 }
