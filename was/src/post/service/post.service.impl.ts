@@ -77,7 +77,7 @@ export class PostServiceImpl
         if (cursor) {
           return Promise.all([
             this.postRepository.findPostsWithCursorByMemberId(
-              memberId,
+              member.id,
               pageSize,
               cursor,
             ),
@@ -85,7 +85,7 @@ export class PostServiceImpl
           ]);
         } else {
           return Promise.all([
-            this.postRepository.findPostsByMemberId(memberId, pageSize),
+            this.postRepository.findPostsByMemberId(member.id, pageSize),
             this.postRepository.countPostsByMemberId(memberId),
           ]);
         }
