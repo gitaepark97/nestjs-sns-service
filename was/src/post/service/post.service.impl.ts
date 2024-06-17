@@ -32,9 +32,8 @@ export class PostServiceImpl
   async createPost(command: CreatePostCommand): Promise<void> {
     // 회원 검증
     await pipe(
-      command,
-      tap(({ memberId }) => this.getMemberService.getMember(command.memberId)), // 회원 조회
-      ({ memberId, content }) => Post.create(memberId, command.content), // 게시글 생성
+      this.getMemberService.getMember(command.memberId), // 회원 조회
+      (member) => Post.create(member.id, command.content), // 게시글 생성
       (post) => this.postRepository.savePost(post), // 게시글 저장
     );
   }

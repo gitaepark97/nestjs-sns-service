@@ -25,15 +25,11 @@ export class MemberServiceImpl
 
   createMember(command: CreateMemberCommand): Promise<void> {
     return pipe(
-      command,
-      tap(({ email, nickname }) =>
-        Promise.all([
-          this.validateEmail(email),
-          this.validateNickname(nickname),
-        ]),
-      ), // 데이터 확인
-      ({ email, password, nickname }) =>
-        Member.create(email, password, nickname), // 회원 생성
+      Promise.all([
+        this.validateEmail(command.email),
+        this.validateNickname(command.nickname),
+      ]), // 데이터 확인
+      () => Member.create(command.email, command.password, command.nickname), // 회원 생성
       (member) => this.memberRepository.saveMember(member), // 회원 저장
     );
   }
