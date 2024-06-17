@@ -523,8 +523,7 @@ describe("MemberController (e2e)", () => {
 
       it("회원 조회 성공", async () => {
         // given
-        const memberId = 1;
-        const url = `/members/${memberId}`;
+        const url = "/members/1";
 
         // when
         const { statusCode, body: responseBody } = await request(
@@ -534,7 +533,7 @@ describe("MemberController (e2e)", () => {
         // then
         expect(statusCode).toBe(HttpStatus.OK);
         expect(responseBody).toBeDefined();
-        expect(responseBody.id).toBe(memberId);
+        expect(responseBody.id).toBe(1);
         expect(responseBody.email).toBe("member1@email.com");
         expect(responseBody.nickname).toBe("회원1");
       });
@@ -544,8 +543,23 @@ describe("MemberController (e2e)", () => {
       describe("올바르지 않은 ID", () => {
         it("숫자가 아닌 ID", async () => {
           // given
-          const memberId = "one";
-          const url = `/members/${memberId}`;
+          const url = "/members/one";
+
+          // when
+          const { statusCode, body: responseBody } = await request(
+            app.getHttpServer(),
+          ).get(url);
+
+          // then
+          expect(statusCode).toBe(HttpStatus.BAD_REQUEST);
+          expect(responseBody.timestamp).toEqual(expect.any(String));
+          expect(responseBody.path).toBe(url);
+          expect(responseBody.message).toBe("회원 ID는 자연수입니다.");
+        });
+
+        it("자연수가 아닌 ID", async () => {
+          // given
+          const url = "/members/0";
 
           // when
           const { statusCode, body: responseBody } = await request(
@@ -564,8 +578,7 @@ describe("MemberController (e2e)", () => {
     describe("not found", () => {
       it("존재하지 않는 회원", async () => {
         // given
-        const memberId = 2;
-        const url = `/members/${memberId}`;
+        const url = "/members/2";
 
         // when
         const { statusCode, body: responseBody } = await request(
@@ -627,8 +640,7 @@ describe("MemberController (e2e)", () => {
 
       it("새로운 닉네임으로 수정 성공", async () => {
         // given
-        const memberId = 1;
-        const url = `/members/${memberId}`;
+        const url = "/members/1";
         const requestBody = {
           nickname: "수정 회원1",
         };
@@ -644,8 +656,7 @@ describe("MemberController (e2e)", () => {
 
       it("기존 닉네임으로 수정 성공", async () => {
         // given
-        const memberId = 1;
-        const url = `/members/${memberId}`;
+        const url = "/members/1";
         const requestBody = {
           nickname: "회원1",
         };
@@ -664,8 +675,28 @@ describe("MemberController (e2e)", () => {
       describe("올바르지 않은 ID", () => {
         it("숫자가 아닌 ID", async () => {
           // given
-          const memberId = "one";
-          const url = `/members/${memberId}`;
+          const url = "/members/one";
+          const requestBody = {
+            nickname: "수정 회원1",
+          };
+
+          // when
+          const { statusCode, body: responseBody } = await request(
+            app.getHttpServer(),
+          )
+            .patch(url)
+            .send(requestBody);
+
+          // then
+          expect(statusCode).toBe(HttpStatus.BAD_REQUEST);
+          expect(responseBody.timestamp).toEqual(expect.any(String));
+          expect(responseBody.path).toBe(url);
+          expect(responseBody.message).toBe("회원 ID는 자연수입니다.");
+        });
+
+        it("자연수가 아닌 ID", async () => {
+          // given
+          const url = "/members/0";
           const requestBody = {
             nickname: "수정 회원1",
           };
@@ -688,8 +719,7 @@ describe("MemberController (e2e)", () => {
       describe("올바르지 않은 닉네임", () => {
         it("문자열이 아닌 닉네임", async () => {
           // given
-          const memberId = 1;
-          const url = `/members/${memberId}`;
+          const url = "/members/1";
           const requestBody = {
             nickname: 1,
           };
@@ -710,8 +740,7 @@ describe("MemberController (e2e)", () => {
 
         it("30자 초과의 닉네임", async () => {
           // given
-          const memberId = 1;
-          const url = `/members/${memberId}`;
+          const url = "/members/1";
           const requestBody = {
             nickname: generateString(31),
           };
@@ -735,8 +764,7 @@ describe("MemberController (e2e)", () => {
     describe("not found", () => {
       it("존재하지 않는 회원", async () => {
         // given
-        const memberId = 2;
-        const url = `/members/${memberId}`;
+        const url = "/members/2";
         const requestBody = {
           nickname: "수정 회원1",
         };
@@ -867,8 +895,7 @@ describe("MemberController (e2e)", () => {
 
       it("회원 삭제 성공", async () => {
         // given
-        const memberId = 1;
-        const url = `/members/${memberId}`;
+        const url = "/members/1";
 
         // when
         const { statusCode } = await request(app.getHttpServer()).delete(url);
@@ -882,8 +909,23 @@ describe("MemberController (e2e)", () => {
       describe("올바르지 않은 ID", () => {
         it("숫자가 아닌 ID", async () => {
           // given
-          const memberId = "one";
-          const url = `/members/${memberId}`;
+          const url = "/members/one";
+
+          // when
+          const { statusCode, body: responseBody } = await request(
+            app.getHttpServer(),
+          ).delete(url);
+
+          // then
+          expect(statusCode).toBe(HttpStatus.BAD_REQUEST);
+          expect(responseBody.timestamp).toEqual(expect.any(String));
+          expect(responseBody.path).toBe(url);
+          expect(responseBody.message).toBe("회원 ID는 자연수입니다.");
+        });
+
+        it("자연수가 아닌 ID", async () => {
+          // given
+          const url = "/members/0";
 
           // when
           const { statusCode, body: responseBody } = await request(
@@ -902,8 +944,7 @@ describe("MemberController (e2e)", () => {
     describe("not found", () => {
       it("존재하지 않는 회원", async () => {
         // given
-        const memberId = 2;
-        const url = `/members/${memberId}`;
+        const url = "/members/2";
 
         // when
         const { statusCode, body: responseBody } = await request(
