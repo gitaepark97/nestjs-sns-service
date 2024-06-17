@@ -81,12 +81,12 @@ export class PostServiceImpl
               pageSize,
               cursor,
             ),
-            this.postRepository.countPostsByMemberId(memberId),
+            this.postRepository.countPostsByMemberId(member.id),
           ]);
         } else {
           return Promise.all([
             this.postRepository.findPostsByMemberId(member.id, pageSize),
-            this.postRepository.countPostsByMemberId(memberId),
+            this.postRepository.countPostsByMemberId(member.id),
           ]);
         }
       },
