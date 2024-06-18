@@ -34,7 +34,6 @@ import {
 import { generateErrorExample } from "../../common/swagger";
 import { DeleteMemberRequestPath } from "./request/delete-member.request";
 import { DeleteMemberService } from "../service/delete-member.service";
-import { pipe } from "@fxts/core";
 
 @ApiTags("회원")
 @Controller("members")
@@ -109,10 +108,12 @@ export class MemberController {
   })
   @Post()
   createMember(@Body() body: CreateMemberRequestBody) {
-    return pipe(
-      new CreateMemberCommand(body.email, body.password, body.nickname),
-      (command) => this.createMemberService.createMember(command),
+    const command = new CreateMemberCommand(
+      body.email,
+      body.password,
+      body.nickname,
     );
+    return this.createMemberService.createMember(command);
   }
 
   @ApiOperation({ summary: "회원 조회 API" })
@@ -233,10 +234,8 @@ export class MemberController {
     @Param() path: UpdateMemberRequestPath,
     @Body() body: UpdateMemberRequestBody,
   ) {
-    return pipe(
-      new UpdateMemberCommand(path.memberId, body.nickname),
-      (command) => this.updateMemberService.updateMember(command),
-    );
+    const command = new UpdateMemberCommand(path.memberId, body.nickname);
+    return this.updateMemberService.updateMember(command);
   }
 
   @ApiOperation({ summary: "회원 삭제 API" })

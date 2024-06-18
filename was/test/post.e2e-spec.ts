@@ -2,7 +2,6 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { AppModule } from "src/app.module";
 import request from "supertest";
-import { map, pipe, range, take, toArray, toAsync } from "@fxts/core";
 import { PostResponse } from "../src/post/controller/response/post.response";
 
 describe("PostController (e2e)", () => {
@@ -16,21 +15,15 @@ describe("PostController (e2e)", () => {
     app = moduleFixture.createNestApplication();
     await app.init();
 
-    await pipe(
-      range(1, Infinity),
-      take(2),
-      toAsync,
-      map((idx) =>
-        request(app.getHttpServer())
-          .post("/members")
-          .send({
-            email: `member${idx}@email.com`,
-            password: "Qwer1234!",
-            nickname: `회원${idx}`,
-          }),
-      ),
-      toArray,
-    );
+    for (let i = 1; i <= 2; i++) {
+      await request(app.getHttpServer())
+        .post("/members")
+        .send({
+          email: `member${i}@email.com`,
+          password: "Qwer1234!",
+          nickname: `회원${i}`,
+        });
+    }
   });
 
   describe("/posts (POST)", () => {
@@ -848,19 +841,13 @@ describe("PostController (e2e)", () => {
   describe("/posts/members/:memberId (GET)", () => {
     describe("ok", () => {
       beforeEach(async () => {
-        await pipe(
-          range(1, Infinity),
-          take(20),
-          toAsync,
-          map((idx) =>
-            request(app.getHttpServer())
-              .post("/posts?memberId=1")
-              .send({
-                content: `게시글 ${idx}`,
-              }),
-          ),
-          toArray,
-        );
+        for (let i = 1; i <= 20; i++) {
+          await request(app.getHttpServer())
+            .post("/posts?memberId=1")
+            .send({
+              content: `게시글 ${i}`,
+            });
+        }
       });
 
       it("회원 게시글 목록 조회 성공", async () => {
@@ -1045,19 +1032,13 @@ describe("PostController (e2e)", () => {
 
     describe("동시성", () => {
       beforeEach(async () => {
-        await pipe(
-          range(1, Infinity),
-          take(20),
-          toAsync,
-          map((idx) =>
-            request(app.getHttpServer())
-              .post("/posts?memberId=1")
-              .send({
-                content: `게시글 ${idx}`,
-              }),
-          ),
-          toArray,
-        );
+        for (let i = 1; i <= 20; i++) {
+          await request(app.getHttpServer())
+            .post("/posts?memberId=1")
+            .send({
+              content: `게시글 ${i}`,
+            });
+        }
       });
 
       it("회원 게시글 목록 조회 성공", async () => {

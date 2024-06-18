@@ -45,7 +45,7 @@ export class Member {
     return member;
   }
 
-  updateNickname(newNickname?: string) {
+  updateNickname(newNickname: string | undefined) {
     // 변경할 닉네임이 존재하지 않는 경우
     if (!newNickname) return;
 

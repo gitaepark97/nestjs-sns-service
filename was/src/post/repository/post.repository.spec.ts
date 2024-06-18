@@ -7,7 +7,6 @@ import { PostRepositoryImpl } from "./post.repository.impl";
 import { Post } from "../domain/post";
 import { PostEntity } from "./entity/post.entity";
 import { MemberEntity } from "../../member/repository/entity/member.entity";
-import { map, pipe, range, take, toArray, toAsync } from "@fxts/core";
 
 describe("PostRepository", () => {
   let repository: PostRepository;
@@ -163,19 +162,13 @@ describe("PostRepository", () => {
 
   describe("회원 게시글 목록 조회", () => {
     beforeEach(async () => {
-      await pipe(
-        range(1, Infinity),
-        take(20),
-        toAsync,
-        map((idx) =>
-          db.getRepository(PostEntity).save({
-            id: idx,
-            creatorId: 1,
-            content: `게시글 ${idx}`,
-          }),
-        ),
-        toArray,
-      );
+      for (let i = 1; i <= 20; i++) {
+        await db.getRepository(PostEntity).save({
+          id: i,
+          creatorId: 1,
+          content: `게시글 ${i}`,
+        });
+      }
     });
 
     it("회원 게시글 목록 조회 성공", async () => {
@@ -200,19 +193,13 @@ describe("PostRepository", () => {
 
   describe("커서로 회원 게시글 목록 조회", () => {
     beforeEach(async () => {
-      await pipe(
-        range(1, Infinity),
-        take(20),
-        toAsync,
-        map((idx) =>
-          db.getRepository(PostEntity).save({
-            id: idx,
-            creatorId: 1,
-            content: `게시글 ${idx}`,
-          }),
-        ),
-        toArray,
-      );
+      for (let i = 1; i <= 20; i++) {
+        await db.getRepository(PostEntity).save({
+          id: i,
+          creatorId: 1,
+          content: `게시글 ${i}`,
+        });
+      }
     });
 
     it("회원 게시글 목록 조회 성공", async () => {
@@ -242,19 +229,13 @@ describe("PostRepository", () => {
 
   describe("회원 게시글 개수 조회", () => {
     beforeEach(async () => {
-      await pipe(
-        range(1, Infinity),
-        take(20),
-        toAsync,
-        map((idx) =>
-          db.getRepository(PostEntity).save({
-            id: idx,
-            creatorId: 1,
-            content: `게시글 ${idx}`,
-          }),
-        ),
-        toArray,
-      );
+      for (let i = 1; i <= 20; i++) {
+        await db.getRepository(PostEntity).save({
+          id: i,
+          creatorId: 1,
+          content: `게시글 ${i}`,
+        });
+      }
     });
 
     it("회원 게시글 목록 조회 성공", async () => {

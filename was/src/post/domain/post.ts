@@ -34,10 +34,6 @@ export class Post {
     return this._updatedAt;
   }
 
-  set content(content: string) {
-    this._content = content;
-  }
-
   static create(memberId: number, content: string) {
     const post = new Post();
 
@@ -63,7 +59,7 @@ export class Post {
     return memberId === this._creatorId;
   }
 
-  updateContent(newContent?: string) {
+  updateContent(newContent: string | undefined) {
     // 변경할 내용 존재하지 않는 경우
     if (!newContent) return;
 
