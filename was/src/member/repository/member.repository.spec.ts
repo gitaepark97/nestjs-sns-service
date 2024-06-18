@@ -49,11 +49,12 @@ describe("MemberRepository", () => {
 
     it("ID가 있는 회원 저장 성공", async () => {
       // given
-      const memberEntity = new MemberEntity();
-      memberEntity.id = 1;
-      memberEntity.email = "member1@email.com";
-      memberEntity.password = "Qwer1234!";
-      memberEntity.nickname = "회원1";
+      const memberEntity = <MemberEntity>{
+        id: 1,
+        email: "member1@email.com",
+        password: "Qwer1234!",
+        nickname: "회원1",
+      };
 
       const member = Member.fromEntity(memberEntity);
 
@@ -197,8 +198,10 @@ describe("MemberRepository", () => {
         .getRepository(MemberEntity)
         .findOne({ where: { id: 1 } });
 
+      const member = Member.fromEntity(savedMemberEntity!);
+
       // when
-      await repository.deleteMember(savedMemberEntity!.id);
+      await repository.deleteMember(member);
 
       // then
       savedMemberEntity = await db
@@ -208,14 +211,23 @@ describe("MemberRepository", () => {
       expect(savedMemberEntity).toBeNull();
     });
 
-    it("ID가 일치하는 회원이 존재하지 않는 경우", async () => {
+    it("회원이 존재하지 않는 경우", async () => {
       // given
+      const memberEntity = <MemberEntity>{
+        id: 2,
+        email: "member2@email.com",
+        password: "Qwer1234!",
+        nickname: "회원2",
+      };
+
+      const member = Member.fromEntity(memberEntity);
 
       // when
-      const result = await repository.findMemberById(2);
+      await expect(() => repository.deleteMember(member)).rejects.toThrow(
+        "존재하지 않는 회원입니다.",
+      );
 
       // then
-      expect(result).toBeNull();
     });
   });
 });

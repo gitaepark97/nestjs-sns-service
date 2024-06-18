@@ -55,10 +55,10 @@ export class MemberRepositoryImpl implements MemberRepository {
       .findOne({ where: { id } })
       .then((entity) => entity && Member.fromEntity(entity));
 
-  deleteMember = (id: number): Promise<void> =>
+  deleteMember = (member: Member): Promise<void> =>
     pipe(
       this.memberEntityRepository.softDelete({
-        id,
+        id: member.id,
         deletedAt: IsNull(),
       }),
       throwIf(

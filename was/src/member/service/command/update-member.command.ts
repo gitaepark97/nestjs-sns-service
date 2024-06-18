@@ -1,6 +1,6 @@
 export class UpdateMemberCommand {
   constructor(
-    readonly id: number,
+    readonly memberId: number,
     readonly nickname: string | undefined,
   ) {}
 }

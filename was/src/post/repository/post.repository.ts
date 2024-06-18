@@ -5,7 +5,7 @@ export abstract class PostRepository {
 
   abstract findPostById(id: number): Promise<Post | null>;
 
-  abstract deletePost(id: number): Promise<void>;
+  abstract deletePost(post: Post): Promise<void>;
 
   abstract findPostsByMemberId(
     memberId: number,

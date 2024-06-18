@@ -11,7 +11,7 @@ import { GetMemberService } from "./get-member.service";
 import { UpdateMemberService } from "./update-member.service";
 import { UpdateMemberCommand } from "./command/update-member.command";
 import { DeleteMemberService } from "./delete-member.service";
-import { curry, isNil, noop, pipe, tap, throwIf } from "@fxts/core";
+import { curry, isNil, negate, noop, pipe, tap, throwIf } from "@fxts/core";
 
 @Injectable()
 export class MemberServiceImpl
@@ -29,6 +29,7 @@ export class MemberServiceImpl
         this.validateEmail(command.email),
         this.validateNickname(command.nickname),
       ]), // 데이터 확인
+
       () => Member.create(command.email, command.password, command.nickname), // 회원 생성
       this.memberRepository.saveMember, // 회원 저장
     );
@@ -42,13 +43,12 @@ export class MemberServiceImpl
   deleteMember = (memberId: number): Promise<void> =>
     pipe(
       this.getMember(memberId), // 회원 조회
-      (member) => member.id,
       this.memberRepository.deleteMember, // 회원 삭제
     );
 
   updateMember = (command: UpdateMemberCommand): Promise<void> =>
     pipe(
-      this.getMember(command.id), // 회원 조회
+      this.getMember(command.memberId), // 회원 조회
       tap(this.updateNickname(command.nickname)), // 닉네임 변경
       this.memberRepository.saveMember, // 회원 저장
     );
@@ -57,7 +57,7 @@ export class MemberServiceImpl
     pipe(
       this.memberRepository.findMemberByEmail(email),
       throwIf(
-        (member) => !isNil(member),
+        negate(isNil),
         () => new ConflictException("이미 사용 중인 이메일입니다."),
       ),
       noop,
@@ -67,7 +67,7 @@ export class MemberServiceImpl
     pipe(
       this.memberRepository.findMemberByNickname(nickname),
       throwIf(
-        (member) => !isNil(member),
+        negate(isNil),
         () => new ConflictException("이미 사용 중인 닉네임입니다."),
       ),
       noop,

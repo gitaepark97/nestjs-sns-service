@@ -29,17 +29,17 @@ export class PostRepositoryImpl implements PostRepository {
       (entity) => entity && Post.fromEntity(entity),
     );
 
-  deletePost = (id: number): Promise<void> =>
+  deletePost = (post: Post): Promise<void> =>
     pipe(
       this.postEntityRepository.softDelete({
-        id,
+        id: post.id,
         deletedAt: IsNull(),
       }),
       throwIf(
         (result) => !result.affected,
         () => new NotFoundException("존재하지 않는 게시글입니다."),
       ),
-      () => {},
+      noop,
     );
 
   findPostsByMemberId = (memberId: number, pageSize: number): Promise<Post[]> =>

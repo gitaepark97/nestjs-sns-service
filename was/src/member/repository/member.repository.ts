@@ -9,5 +9,5 @@ export abstract class MemberRepository {
 
   abstract findMemberById(id: number): Promise<Member | null>;
 
-  abstract deleteMember(id: number): Promise<void>;
+  abstract deleteMember(member: Member): Promise<void>;
 }
