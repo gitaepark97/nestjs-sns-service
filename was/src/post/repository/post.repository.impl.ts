@@ -41,7 +41,7 @@ export class PostRepositoryImpl implements PostRepository {
     });
   }
 
-  findPostsWithCursorByMemberId(
+  findPostsByMemberIdWithCursor(
     memberId: number,
     pageSize: number,
     cursor: number,

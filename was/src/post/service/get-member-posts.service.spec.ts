@@ -30,7 +30,7 @@ describe("GetMemberPostsService", () => {
           provide: PostRepository,
           useValue: {
             findPostsByMemberId: jest.fn(),
-            findPostsWithCursorByMemberId: jest.fn(),
+            findPostsByMemberIdWithCursor: jest.fn(),
             countPostsByMemberId: jest.fn(),
           },
         },
@@ -99,8 +99,8 @@ describe("GetMemberPostsService", () => {
       const getMemberMock = jest
         .spyOn(getMemberService, "getMember")
         .mockResolvedValueOnce(member);
-      const findPostsWithCursorByMemberIdMock = jest
-        .spyOn(postRepository, "findPostsWithCursorByMemberId")
+      const findPostsByMemberIdWithCursorMock = jest
+        .spyOn(postRepository, "findPostsByMemberIdWithCursor")
         .mockImplementation(async (_, pageSize, cursor) =>
           posts.slice(
             posts.length - cursor + 1,
@@ -135,7 +135,7 @@ describe("GetMemberPostsService", () => {
       });
 
       expect(getMemberMock).toHaveBeenCalledTimes(1);
-      expect(findPostsWithCursorByMemberIdMock).toHaveBeenCalledTimes(1);
+      expect(findPostsByMemberIdWithCursorMock).toHaveBeenCalledTimes(1);
       expect(countPostsByMemberIdMock).toHaveBeenCalledTimes(1);
     });
   });

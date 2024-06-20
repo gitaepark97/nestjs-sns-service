@@ -209,7 +209,7 @@ describe("PostRepository", () => {
       const cursor = 16;
 
       // when
-      const posts = await repository.findPostsWithCursorByMemberId(
+      const posts = await repository.findPostsByMemberIdWithCursor(
         memberId,
         pageSize,
         cursor,

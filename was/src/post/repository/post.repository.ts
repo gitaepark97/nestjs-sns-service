@@ -12,7 +12,7 @@ export abstract class PostRepository {
     pageSize: number,
   ): Promise<Post[]>;
 
-  abstract findPostsWithCursorByMemberId(
+  abstract findPostsByMemberIdWithCursor(
     memberId: number,
     pageSize: number,
     cursor: number,

@@ -97,7 +97,7 @@ export class PostServiceImpl
     cursor: number | undefined,
   ) {
     return cursor
-      ? this.postRepository.findPostsWithCursorByMemberId(
+      ? this.postRepository.findPostsByMemberIdWithCursor(
           memberId,
           pageSize,
           cursor,
