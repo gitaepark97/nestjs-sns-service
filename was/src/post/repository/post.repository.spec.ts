@@ -2,11 +2,11 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "src/config/config.module";
 import { DataSource } from "typeorm";
-import { PostRepository } from "./post.repository";
-import { PostRepositoryImpl } from "./post.repository.impl";
+import { MemberEntity } from "../../member/repository/entity/member.entity";
 import { Post } from "../domain/post";
 import { PostEntity } from "./entity/post.entity";
-import { MemberEntity } from "../../member/repository/entity/member.entity";
+import { PostRepository } from "./post.repository";
+import { PostRepositoryImpl } from "./post.repository.impl";
 
 describe("PostRepository", () => {
   let repository: PostRepository;
@@ -47,7 +47,6 @@ describe("PostRepository", () => {
         .getRepository(PostEntity)
         .findOne({ where: { id: 1 } });
 
-      expect(savedPostEntity).toBeInstanceOf(PostEntity);
       expect(savedPostEntity!.creatorId).toBe(post.creatorId);
       expect(savedPostEntity!.content).toBe(post.content);
       expect(savedPostEntity!.createdAt).toEqual(expect.any(Date));

@@ -26,6 +26,10 @@ describe("PostController (e2e)", () => {
     }
   });
 
+  afterEach(async () => {
+    app.close();
+  });
+
   describe("/posts (POST)", () => {
     describe("created", () => {
       it("게시글 생성 성공", async () => {

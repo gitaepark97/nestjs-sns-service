@@ -4,12 +4,12 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { FollowService } from "./follow.service";
-import { UnfollowService } from "./unfollow.service";
-import { FollowRepository } from "../repository/follow.repository";
 import { GetMemberService } from "../../member/service/get-member.service";
 import { Follow } from "../domain/follow";
+import { FollowRepository } from "../repository/follow.repository";
+import { FollowService } from "./follow.service";
 import { GetFollowingService } from "./get-following.service";
+import { UnfollowService } from "./unfollow.service";
 
 @Injectable()
 export class FollowServiceImpl

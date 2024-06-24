@@ -1,9 +1,14 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
-import { FollowRepository } from "./follow.repository";
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FollowEntity } from "./entity/follow.entity";
+import { extractIdxName } from "src/util/database.util";
 import { Repository } from "typeorm";
 import { Follow } from "../domain/follow";
+import { FollowEntity } from "./entity/follow.entity";
+import { FollowRepository } from "./follow.repository";
 
 @Injectable()
 export class FollowRepositoryImpl implements FollowRepository {
@@ -13,11 +18,22 @@ export class FollowRepositoryImpl implements FollowRepository {
   ) {}
 
   async saveFollow(follow: Follow): Promise<void> {
-    console.log(follow);
-    await this.followEntityRepository.save({
-      followerId: follow.followerId,
-      followedId: follow.followedId,
-    });
+    await this.followEntityRepository
+      .save({
+        followerId: follow.followerId,
+        followedId: follow.followedId,
+      })
+      .catch((err) => {
+        switch (err.code) {
+          case "ER_DUP_ENTRY":
+            switch (extractIdxName(err)) {
+              case "PRIMARY":
+                throw new ConflictException("이미 팔로우 중입니다.");
+            }
+        }
+
+        throw err;
+      });
   }
 
   async findFollow(
@@ -36,7 +52,7 @@ export class FollowRepositoryImpl implements FollowRepository {
       followedId: follow.followedId,
     });
     if (result.affected === 0)
-      throw new ForbiddenException("팔로우 관계가 아닙니다.");
+      throw new NotFoundException("먼저 팔로우해주세요.");
   }
 
   async findFollowsByFollowerId(followerId: number): Promise<Follow[]> {

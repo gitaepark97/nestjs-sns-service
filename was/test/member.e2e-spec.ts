@@ -16,6 +16,10 @@ describe("MemberController (e2e)", () => {
     await app.init();
   });
 
+  afterEach(async () => {
+    app.close();
+  });
+
   describe("/members (POST)", () => {
     describe("created", () => {
       it("회원 생성 성공", async () => {

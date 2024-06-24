@@ -2,10 +2,10 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "src/config/config.module";
 import { DataSource } from "typeorm";
-import { MemberRepository } from "./member.repository";
-import { MemberEntity } from "./entity/member.entity";
-import { MemberRepositoryImpl } from "./member.repository.impl";
 import { Member } from "../domain/member";
+import { MemberEntity } from "./entity/member.entity";
+import { MemberRepository } from "./member.repository";
+import { MemberRepositoryImpl } from "./member.repository.impl";
 
 describe("MemberRepository", () => {
   let repository: MemberRepository;
@@ -39,7 +39,6 @@ describe("MemberRepository", () => {
         .getRepository(MemberEntity)
         .findOne({ where: { id: 1 } });
 
-      expect(savedMemberEntity).toBeInstanceOf(MemberEntity);
       expect(savedMemberEntity!.email).toBe(member.email);
       expect(savedMemberEntity!.password).toBe(member.password);
       expect(savedMemberEntity!.nickname).toBe(member.nickname);

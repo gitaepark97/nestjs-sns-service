@@ -7,17 +7,6 @@ import {
   Post,
   Query,
 } from "@nestjs/common";
-import { FollowService } from "../service/follow.service";
-import { UnfollowService } from "../service/unfollow.service";
-import { GetFollowingService } from "../service/get-following.service";
-import {
-  FollowRequestPath,
-  FollowRequestQuery,
-} from "./request/follow.request";
-import {
-  UnfollowRequestPath,
-  UnfollowRequestQuery,
-} from "./request/unfollow.request";
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
@@ -28,6 +17,17 @@ import {
   ApiOperation,
 } from "@nestjs/swagger";
 import { generateErrorExample } from "../../common/swagger";
+import { FollowService } from "../service/follow.service";
+import { GetFollowingService } from "../service/get-following.service";
+import { UnfollowService } from "../service/unfollow.service";
+import {
+  FollowRequestPath,
+  FollowRequestQuery,
+} from "./request/follow.request";
+import {
+  UnfollowRequestPath,
+  UnfollowRequestQuery,
+} from "./request/unfollow.request";
 
 @Controller("follows")
 export class FollowController {
@@ -161,12 +161,6 @@ export class FollowController {
     content: {
       "application/json": {
         examples: {
-          member: {
-            value: generateErrorExample(
-              "/v1/follows/:followedId",
-              "존재하지 않는 회원입니다.",
-            ),
-          },
           follow: {
             value: generateErrorExample(
               "/v1/follows/:followedId",
