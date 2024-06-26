@@ -1,3 +1,3 @@
-export abstract class GetFollowingService {
-  abstract getFollowing(memberId: number): Promise<number[]>;
+export abstract class GetFollowingIdsService {
+  abstract getFollowingIds(memberId: number): Promise<number[]>;
 }

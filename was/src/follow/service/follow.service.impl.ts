@@ -8,12 +8,12 @@ import { GetMemberService } from "../../member/service/get-member.service";
 import { Follow } from "../domain/follow";
 import { FollowRepository } from "../repository/follow.repository";
 import { FollowService } from "./follow.service";
-import { GetFollowingService } from "./get-following.service";
+import { GetFollowingIdsService } from "./get-following.service";
 import { UnfollowService } from "./unfollow.service";
 
 @Injectable()
 export class FollowServiceImpl
-  implements FollowService, UnfollowService, GetFollowingService
+  implements FollowService, UnfollowService, GetFollowingIdsService
 {
   constructor(
     private readonly getMemberService: GetMemberService,
@@ -25,10 +25,7 @@ export class FollowServiceImpl
       throw new ForbiddenException("본인은 팔로우 할 수 없습니다.");
 
     // 회원 확인
-    await Promise.all([
-      this.getMemberService.getMember(followerId),
-      this.getMemberService.getMember(followedId),
-    ]);
+    await this.getMemberService.getMember(followedId);
 
     // 팔로우 확인
     const existFollow = await this.followRepository.findFollow(
@@ -57,7 +54,7 @@ export class FollowServiceImpl
     return this.followRepository.deleteFollow(follow);
   }
 
-  async getFollowing(memberId: number): Promise<number[]> {
+  async getFollowingIds(memberId: number): Promise<number[]> {
     // 팔로우 목록 조회
     const followers =
       await this.followRepository.findFollowsByFollowerId(memberId);

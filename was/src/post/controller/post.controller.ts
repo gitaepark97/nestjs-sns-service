@@ -19,35 +19,37 @@ import {
   ApiOperation,
   ApiTags,
 } from "@nestjs/swagger";
+import { generateErrorExample } from "../../common/swagger";
+import { ResponseValidationInterceptor } from "../../common/validation/response-validation.interceptor";
+import { CreatePostCommand } from "../service/command/create-post.command";
+import { UpdatePostCommand } from "../service/command/update-post.command";
 import { CreatePostService } from "../service/create-post.service";
+import { DeletePostService } from "../service/delete-post.service";
+import { GetFollowingMembersPostsService } from "../service/get-followings-posts.service";
+import { GetMemberPostsService } from "../service/get-member-posts.service";
+import { GetPostService } from "../service/get-post.service";
+import { UpdatePostService } from "../service/update-post.service";
 import {
   CreatePostRequestBody,
   CreatePostRequestQuery,
 } from "./request/create-post.request";
-import { CreatePostCommand } from "../service/command/create-post.command";
-import { generateErrorExample } from "../../common/swagger";
+import {
+  DeletePostRequestPath,
+  DeletePostRequestQuery,
+} from "./request/delete-post.request";
+import { GetFollowingMembersPostsRequestQuery } from "./request/get-following-members-posts.request";
 import {
   GetMemberPostsRequestPath,
   GetMemberPostsRequestQuery,
 } from "./request/get-member-posts.request";
-import { GetMemberPostsService } from "../service/get-member-posts.service";
-import { ResponseValidationInterceptor } from "../../common/validation/response-validation.interceptor";
-import { PostsResponse } from "./response/posts.response";
-import { PostResponse } from "./response/post.response";
 import { GetPostRequestPath } from "./request/get-post.request";
-import { GetPostService } from "../service/get-post.service";
 import {
   UpdatePostRequestBody,
   UpdatePostRequestPath,
   UpdatePostRequestQuery,
 } from "./request/update-post.request";
-import { UpdatePostCommand } from "../service/command/update-post.command";
-import { DeletePostService } from "../service/delete-post.service";
-import { UpdatePostService } from "../service/update-post.service";
-import {
-  DeletePostRequestPath,
-  DeletePostRequestQuery,
-} from "./request/delete-post.request";
+import { PostResponse } from "./response/post.response";
+import { PostsResponse } from "./response/posts.response";
 
 @ApiTags("게시글")
 @Controller("posts")
@@ -58,6 +60,7 @@ export class PostController {
     private readonly updatePostService: UpdatePostService,
     private readonly deletePostService: DeletePostService,
     private readonly getMemberPostsService: GetMemberPostsService,
+    private readonly getFollowingMembersPostsService: GetFollowingMembersPostsService,
   ) {}
 
   @ApiOperation({ summary: "게시글 생성 API" })
@@ -322,6 +325,58 @@ export class PostController {
     return this.deletePostService.deletePost(query.memberId, path.postId);
   }
 
+  @ApiOperation({ summary: "팔루우 회원들의 게시글 목록 API" })
+  @ApiOkResponse({ description: "ok", type: PostsResponse })
+  @ApiBadRequestResponse({
+    description: "bad request",
+    content: {
+      "application/json": {
+        examples: {
+          memberId: {
+            value: generateErrorExample(
+              "/v1/posts/members/following",
+              "회원 ID는 자연수입니다.",
+            ),
+          },
+          pageSize: {
+            value: generateErrorExample(
+              "/v1/posts/members/following",
+              "페이지 크기는 자연수입니다.",
+            ),
+          },
+          lastPostId: {
+            value: generateErrorExample(
+              "/v1/posts/members/following",
+              "마지막 게시글 ID는 자연수입니다.",
+            ),
+          },
+        },
+      },
+    },
+  })
+  @ApiInternalServerErrorResponse({
+    description: "internal server error",
+    content: {
+      "application/json": {
+        example: generateErrorExample(
+          "/v1/posts/members/following",
+          "서버 오류입니다. 잠시 후 재시도해주세요.",
+        ),
+      },
+    },
+  })
+  @Get("members/following")
+  @UseInterceptors(new ResponseValidationInterceptor(PostsResponse))
+  getFollowingMembersPosts(
+    @Query() query: GetFollowingMembersPostsRequestQuery,
+  ) {
+    return this.getFollowingMembersPostsService.getFollowingMembersPosts(
+      query.memberId,
+      query.pageSize,
+      query.lastPostId,
+    );
+  }
+
   @ApiOperation({ summary: "회원의 게시글 목록 API" })
   @ApiOkResponse({ description: "ok", type: PostsResponse })
   @ApiBadRequestResponse({
@@ -377,7 +432,7 @@ export class PostController {
       },
     },
   })
-  @Get("/members/:memberId")
+  @Get("members/:memberId")
   @UseInterceptors(new ResponseValidationInterceptor(PostsResponse))
   getMemberPosts(
     @Param() path: GetMemberPostsRequestPath,

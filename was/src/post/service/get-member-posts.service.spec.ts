@@ -1,12 +1,12 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { PostRepository } from "../repository/post.repository";
-import { PostServiceImpl } from "./post.service.impl";
 import { Member } from "../../member/domain/member";
 import { MemberEntity } from "../../member/repository/entity/member.entity";
+import { GetMemberService } from "../../member/service/get-member.service";
 import { Post } from "../domain/post";
 import { PostEntity } from "../repository/entity/post.entity";
+import { PostRepository } from "../repository/post.repository";
 import { GetMemberPostsService } from "./get-member-posts.service";
-import { GetMemberService } from "../../member/service/get-member.service";
+import { PostServiceImpl } from "./post.service.impl";
 
 describe("GetMemberPostsService", () => {
   let service: GetMemberPostsService;
@@ -67,9 +67,6 @@ describe("GetMemberPostsService", () => {
       const findPostsByMemberIdMock = jest
         .spyOn(postRepository, "findPostsByMemberId")
         .mockImplementation(async (_, pageSize) => posts.slice(0, pageSize));
-      const countPostsByMemberIdMock = jest
-        .spyOn(postRepository, "countPostsByMemberId")
-        .mockResolvedValueOnce(posts.length);
 
       // given
       const pageSize = 10;
@@ -79,7 +76,6 @@ describe("GetMemberPostsService", () => {
 
       // then
       expect(result.posts.length).toBe(pageSize);
-      expect(result.totalCount).toBe(posts.length);
 
       result.posts.forEach((post, idx) => {
         expect(post.id).toBe(posts.length - idx);
@@ -91,7 +87,6 @@ describe("GetMemberPostsService", () => {
 
       expect(getMemberMock).toHaveBeenCalledTimes(1);
       expect(findPostsByMemberIdMock).toHaveBeenCalledTimes(1);
-      expect(countPostsByMemberIdMock).toHaveBeenCalledTimes(1);
     });
 
     it("마지막 게시글 ID로 회원 게시글 목록 조회 성공", async () => {
@@ -107,9 +102,6 @@ describe("GetMemberPostsService", () => {
             posts.length - cursor + 1 + pageSize,
           ),
         );
-      const countPostsByMemberIdMock = jest
-        .spyOn(postRepository, "countPostsByMemberId")
-        .mockResolvedValueOnce(posts.length);
 
       // given
       const pageSize = 10;
@@ -124,7 +116,6 @@ describe("GetMemberPostsService", () => {
 
       // then
       expect(result.posts.length).toBe(pageSize);
-      expect(result.totalCount).toBe(posts.length);
 
       result.posts.forEach((post, idx) => {
         expect(post.id).toBe(lastPostId - idx - 1);
@@ -136,7 +127,6 @@ describe("GetMemberPostsService", () => {
 
       expect(getMemberMock).toHaveBeenCalledTimes(1);
       expect(findPostsByMemberIdWithCursorMock).toHaveBeenCalledTimes(1);
-      expect(countPostsByMemberIdMock).toHaveBeenCalledTimes(1);
     });
   });
 });

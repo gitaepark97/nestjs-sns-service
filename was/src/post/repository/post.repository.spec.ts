@@ -225,27 +225,4 @@ describe("PostRepository", () => {
       });
     });
   });
-
-  describe("회원 게시글 개수 조회", () => {
-    beforeEach(async () => {
-      for (let i = 1; i <= 20; i++) {
-        await db.getRepository(PostEntity).save({
-          id: i,
-          creatorId: 1,
-          content: `게시글 ${i}`,
-        });
-      }
-    });
-
-    it("회원 게시글 목록 조회 성공", async () => {
-      // given
-      const memberId = 1;
-
-      // when
-      const totalCount = await repository.countPostsByMemberId(memberId);
-
-      // then
-      expect(totalCount).toBe(20);
-    });
-  });
 });

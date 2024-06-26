@@ -5,5 +5,5 @@ export abstract class GetMemberPostsService {
     memberId: number,
     pageSize: number,
     cursor?: number,
-  ): Promise<{ posts: Post[]; totalCount: number }>;
+  ): Promise<{ posts: Post[] }>;
 }

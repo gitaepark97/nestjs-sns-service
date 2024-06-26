@@ -64,8 +64,7 @@ describe("FollowService", () => {
       // mocking
       const getMemberMock = jest
         .spyOn(getMemberService, "getMember")
-        .mockResolvedValueOnce(member1);
-      jest.spyOn(getMemberService, "getMember").mockResolvedValueOnce(member2);
+        .mockResolvedValueOnce(member2);
       const findFollowMock = jest
         .spyOn(followRepository, "findFollow")
         .mockResolvedValueOnce(null);
@@ -79,7 +78,7 @@ describe("FollowService", () => {
       await service.follow(member1.id, member2.id);
 
       // then
-      expect(getMemberMock).toHaveBeenCalledTimes(2);
+      expect(getMemberMock).toHaveBeenCalledTimes(1);
       expect(findFollowMock).toHaveBeenCalledTimes(1);
       expect(saveFollowMock).toHaveBeenCalledTimes(1);
     });
@@ -129,7 +128,7 @@ describe("FollowService", () => {
       ).rejects.toThrow("이미 팔로우 중입니다.");
 
       // then
-      expect(getMemberMock).toHaveBeenCalledTimes(2);
+      expect(getMemberMock).toHaveBeenCalledTimes(1);
       expect(findFollowMock).toHaveBeenCalledTimes(1);
       expect(saveFollowMock).toHaveBeenCalledTimes(0);
     });

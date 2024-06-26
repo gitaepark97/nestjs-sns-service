@@ -4,17 +4,17 @@ import { Follow } from "../domain/follow";
 import { FollowEntity } from "../repository/entity/follow.entity";
 import { FollowRepository } from "../repository/follow.repository";
 import { FollowServiceImpl } from "./follow.service.impl";
-import { GetFollowingService } from "./get-following.service";
+import { GetFollowingIdsService } from "./get-following.service";
 
 describe("GetFollowingService", () => {
-  let service: GetFollowingService;
+  let service: GetFollowingIdsService;
   let followRepository: FollowRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
-          provide: GetFollowingService,
+          provide: GetFollowingIdsService,
           useClass: FollowServiceImpl,
         },
         {
@@ -30,7 +30,7 @@ describe("GetFollowingService", () => {
       ],
     }).compile();
 
-    service = module.get<GetFollowingService>(GetFollowingService);
+    service = module.get<GetFollowingIdsService>(GetFollowingIdsService);
     followRepository = module.get<FollowRepository>(FollowRepository);
   });
 
@@ -53,7 +53,7 @@ describe("GetFollowingService", () => {
       // given
 
       // when
-      const result = await service.getFollowing(1);
+      const result = await service.getFollowingIds(1);
 
       // then
       result.forEach((memberId) => {

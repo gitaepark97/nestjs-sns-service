@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { PostRepository } from "./post.repository";
 import { InjectRepository } from "@nestjs/typeorm";
-import { PostEntity } from "./entity/post.entity";
-import { FindManyOptions, IsNull, LessThan, Repository } from "typeorm";
+import { FindManyOptions, In, IsNull, LessThan, Repository } from "typeorm";
 import { Post } from "../domain/post";
+import { PostEntity } from "./entity/post.entity";
+import { PostRepository } from "./post.repository";
 
 @Injectable()
 export class PostRepositoryImpl implements PostRepository {
@@ -56,8 +56,26 @@ export class PostRepositoryImpl implements PostRepository {
     });
   }
 
-  async countPostsByMemberId(memberId: number): Promise<number> {
-    return this.postEntityRepository.count({ where: { creatorId: memberId } });
+  findPostsByMemberIds(memberIds: number[], pageSize: number): Promise<Post[]> {
+    return this.findPostsWithOption({
+      where: { creatorId: In(memberIds) },
+      take: pageSize,
+    });
+  }
+
+  findPostsByMemberIdsWithCursor(
+    memberIds: number[],
+    pageSize: number,
+    cursor: number,
+  ): Promise<Post[]> {
+    return this.findPostsWithOption({
+      where: {
+        creatorId: In(memberIds),
+        id: LessThan(cursor),
+      },
+
+      take: pageSize,
+    });
   }
 
   private async findPostsWithOption(options: FindManyOptions<PostEntity>) {

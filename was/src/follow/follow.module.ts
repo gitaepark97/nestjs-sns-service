@@ -1,14 +1,14 @@
 import { Module } from "@nestjs/common";
-import { FollowService } from "./service/follow.service";
-import { FollowServiceImpl } from "./service/follow.service.impl";
-import { UnfollowService } from "./service/unfollow.service";
-import { GetFollowingService } from "./service/get-following.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { FollowEntity } from "./repository/entity/follow.entity";
 import { MemberModule } from "../member/member.module";
+import { FollowController } from "./controller/follow.controller";
+import { FollowEntity } from "./repository/entity/follow.entity";
 import { FollowRepository } from "./repository/follow.repository";
 import { FollowRepositoryImpl } from "./repository/follow.repository.impl";
-import { FollowController } from "./controller/follow.controller";
+import { FollowService } from "./service/follow.service";
+import { FollowServiceImpl } from "./service/follow.service.impl";
+import { GetFollowingIdsService } from "./service/get-following.service";
+import { UnfollowService } from "./service/unfollow.service";
 
 @Module({
   imports: [TypeOrmModule.forFeature([FollowEntity]), MemberModule],
@@ -20,7 +20,8 @@ import { FollowController } from "./controller/follow.controller";
       provide: UnfollowService,
       useClass: FollowServiceImpl,
     },
-    { provide: GetFollowingService, useClass: FollowServiceImpl },
+    { provide: GetFollowingIdsService, useClass: FollowServiceImpl },
   ],
+  exports: [GetFollowingIdsService],
 })
 export class FollowModule {}

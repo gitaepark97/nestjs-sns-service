@@ -866,7 +866,6 @@ describe("PostController (e2e)", () => {
         // then
         expect(statusCode).toBe(HttpStatus.OK);
         expect(responseBody.posts.length).toBe(10);
-        expect(responseBody.totalCount).toBe(20);
 
         responseBody.posts.forEach((post: PostResponse, idx: number) => {
           expect(post.id).toBe(20 - idx);
@@ -890,7 +889,6 @@ describe("PostController (e2e)", () => {
         // then
         expect(statusCode).toBe(HttpStatus.OK);
         expect(responseBody.posts.length).toBe(5);
-        expect(responseBody.totalCount).toBe(20);
 
         responseBody.posts.forEach((post: PostResponse, idx: number) => {
           expect(post.id).toBe(20 - idx);
@@ -914,7 +912,6 @@ describe("PostController (e2e)", () => {
         // then
         expect(statusCode).toBe(HttpStatus.OK);
         expect(responseBody.posts.length).toBe(10);
-        expect(responseBody.totalCount).toBe(20);
 
         responseBody.posts.forEach((post: PostResponse, idx: number) => {
           expect(post.id).toBe(16 - idx - 1);

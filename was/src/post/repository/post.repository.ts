@@ -18,5 +18,14 @@ export abstract class PostRepository {
     cursor: number,
   ): Promise<Post[]>;
 
-  abstract countPostsByMemberId(memberId: number): Promise<number>;
+  abstract findPostsByMemberIds(
+    memberIds: number[],
+    pageSize: number,
+  ): Promise<Post[]>;
+
+  abstract findPostsByMemberIdsWithCursor(
+    memberIds: number[],
+    pageSize: number,
+    cursor: number,
+  ): Promise<Post[]>;
 }

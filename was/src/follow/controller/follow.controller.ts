@@ -18,7 +18,7 @@ import {
 } from "@nestjs/swagger";
 import { generateErrorExample } from "../../common/swagger";
 import { FollowService } from "../service/follow.service";
-import { GetFollowingService } from "../service/get-following.service";
+import { GetFollowingIdsService } from "../service/get-following.service";
 import { UnfollowService } from "../service/unfollow.service";
 import {
   FollowRequestPath,
@@ -34,7 +34,7 @@ export class FollowController {
   constructor(
     private readonly followService: FollowService,
     private readonly unfollowService: UnfollowService,
-    private readonly getFollowingService: GetFollowingService,
+    private readonly getFollowingService: GetFollowingIdsService,
   ) {}
 
   @ApiOperation({ summary: "회원 팔로우 API" })
